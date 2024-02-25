@@ -31,6 +31,21 @@ pipeline{
                         docker_image.push()
                     }
                 }
+                // Remove dangling images
+                                sh "docker image prune -f"
+                                script{
+                                    // Check if container is already running
+                                    def isContainerRunning = sh(script: "docker ps -q --filter name=Calculator", returnStatus: true)
+
+                                    if (isContainerRunning == 0) {
+                                        // If container is running, stop it
+                                        sh "docker stop Calculator"
+                                    }
+                                }
+                
+                // Remove the container and its image
+                    sh "docker rm Calculator || true"
+                    sh "docker rmi -f 0srishtiyadav0/calculator:latest || true"
             }
         }
         stage('Step 5: Ansible Deployment'){
