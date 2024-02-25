@@ -1,0 +1,49 @@
+pipeline{
+    environment{
+        // LANG = 'en_US.UTF-8'
+        docker_image = ""
+    }
+    agent any
+    stages{
+        stage('Stage 1: Git Clone'){
+           steps{
+                git branch: 'master',
+                url:'https://github.com/y-srishti/Calculator.git'
+            }
+        }
+
+        stage('Step 2: Maven Build'){
+            steps{
+                sh 'mvn clean install'
+            }
+        }
+          stage('Step 3: Build Docker Image'){
+            steps {
+                script {
+                    docker_image = docker.build "0srishtiyadav0/calculator:latest"
+                }
+            }
+        }
+        stage('Stage 4: Push docker image to hub') {
+            steps{
+                script{
+                    docker.withRegistry('', '0srishtiyadav0'){
+                        docker_image.push()
+                    }
+                }
+            }
+        }
+        stage('Step 5: Ansible Deployment'){
+            steps{
+                ansiblePlaybook becomeUser: null,
+                colorized: true,
+                credentialsId: 'localhost',
+                disableHostKeyChecking: true,
+                installation: 'Ansible',
+                inventory: 'Deployment/inventory',
+                playbook: 'Deployment/deploy.yml',
+                sudoUser: null
+            }
+        }
+    }
+}
