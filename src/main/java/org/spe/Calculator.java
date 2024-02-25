@@ -41,7 +41,7 @@ public class Calculator {
                 choice = scanner.nextInt();
             }
             catch (InputMismatchException error) {
-                System.out.println("Exiting.....");
+                System.out.println("Exiting....");
                 scanner.close();
                 return;
             }
