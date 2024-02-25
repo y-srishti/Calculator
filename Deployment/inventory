@@ -1,2 +1,2 @@
 [targets]
-127.0.0.1 ansible_user=srishti
+127.0.0.1 ansible_user=srishti ansible_ssh_pass=227797
